@@ -1,0 +1,49 @@
+version: '3.3'
+
+services:
+  mongodb:
+    image: mongo:${CAS_LOGGER_MONGODB_VER}
+    container_name: logger_mongodb
+    ports:
+      - ${CAS_LOGGER_MONGODB_PORT}:27017
+    environment:
+      - MONGO_INITDB_DATABASE=${CAS_LOGGER_SECRET_DB_NAME}
+      #- MONGO_INITDB_ROOT_USERNAME=admin
+      #- MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      # seeding scripts
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      # named volumes
+      - logger_data:/data/db
+      - logger_conf:/data/configdb
+    networks:
+      - logger_net
+    restart: always
+
+  logger:
+    # build will get tagged with 'image'
+    build:
+      context: ./logger
+      args:
+          - REPO_BRANCH=${CAS_LOGGER_RELEASE}
+          - SECRET_KEY=${CAS_LOGGER_SECRET_KEY}
+          - SECURITY_PASSWORD_SALT=${CAS_LOGGER_SECURITY_PASSWORD_SALT}
+          - SECRET_DB_NAME=${CAS_LOGGER_SECRET_DB_NAME}
+    image: cas.logger:1.0
+    container_name: logger
+    ports:
+      - ${CAS_LOGGER_API_PORT}:8120
+    networks:
+      - logger_net
+    depends_on:
+      - mongodb
+    restart: always
+
+volumes:
+  # default dir on Ubuntu: /var/lib/docker/volumes
+  logger_data:
+  logger_conf:
+
+networks:
+  logger_net:
+    driver: bridge

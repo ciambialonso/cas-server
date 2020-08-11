@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  cas.gitlab:
+    image: gitlab/gitlab-ce:${CAS_GITLAB_IMAGE_TAG}
+    container_name: gitlab
+    volumes:
+      - gitlab_conf:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
+      # - "./config:/etc/gitlab"
+      # - "./logs:/var/log/gitlab"
+      # - "./data:/var/opt/gitlab"
+    environment:
+            GITLAB_OMNIBUS_CONFIG: |
+                    ${CAS_GITLAB_OMNIBUS_CONFIG}
+    ports:
+      - "${CAS_GITLAB_HTTPS_PORT}:443"
+      - "${CAS_GITLAB_HTTP_PORT}:80"
+      - "${CAS_GITLAB_API_PORT}:22"
+    restart: always
+
+volumes:
+  gitlab_conf:
+  gitlab_data:
+  gitlab_logs:

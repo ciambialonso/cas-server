@@ -1,0 +1,52 @@
+data:
+  image: tianon/true
+  volumes:
+    - /var/lib/postgresql/data
+    - /usr/local/taiga/media
+    - /usr/local/taiga/static
+    - /usr/local/taiga/logs
+
+db:
+  image: postgres:${CAS_TAIGA_POSTGRES_IMAGE_TAG}
+  container_name: taiga_db
+  environment:
+    POSTGRES_USER: ${CAS_TAIGA_POSTGRES_USR}
+    POSTGRES_PASSWORD: ${CAS_TAIGA_POSTGRES_PSW}
+  volumes_from:
+    - data
+  restart: always
+
+taigaback:
+  build: ./taiga-back
+    # args:
+    #     - REPO_TAG=${CAS_TAIGA_BACK_TAG}
+  container_name: taigaback  
+  hostname: ${CAS_TAIGA_HOST_NAME}
+  environment:
+    SECRET_KEY:              ${CAS_TAIGA_SECRET_KEY}
+    EMAIL_USE_TLS:           ${CAS_TAIGA_EMAIL_USE_TLS}
+    EMAIL_HOST:              ${CAS_TAIGA_EMAIL_HOST}
+    EMAIL_PORT:              ${CAS_TAIGA_EMAIL_PORT}
+    EMAIL_HOST_USER:         ${CAS_TAIGA_EMAIL_HOST_USER}
+    EMAIL_HOST_PASSWORD:     ${CAS_TAIGA_EMAIL_HOST_PASSWORD}
+    POSTGRES_HOST:           ${CAS_TAIGA_POSTGRES_HOST}
+    POSTGRES_PORT:           ${CAS_TAIGA_POSTGRES_PORT}
+  links:
+    - db:postgres
+  volumes_from:
+    - data
+  restart: always
+
+taigafront:
+  build: ./taiga-front-dist
+    # args:
+    #     - REPO_TAG=${CAS_TAIGA_FRONT_TAG}
+  container_name: taigafront
+  hostname: ${CAS_TAIGA_HOST_NAME}
+  links:
+    - taigaback
+  volumes_from:
+    - data
+  ports:
+    - 0.0.0.0:${CAS_TAIGA_FRONT_PORT}:80
+  restart: always
