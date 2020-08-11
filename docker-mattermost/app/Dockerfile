@@ -24,7 +24,7 @@ RUN apk add --no-cache \
 	mailcap \
 	netcat-openbsd \
 	xmlsec-dev \
-	&& rm -rf /tmp/*
+	&& rm -rf /tmp/*; exit 0
 
 # Get Mattermost
 RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins \
@@ -35,7 +35,7 @@ RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins \
     && rm -rf /mattermost/config/config.json \
     && addgroup -g ${PGID} mattermost \
     && adduser -D -u ${PUID} -G mattermost -h /mattermost -D mattermost \
-    && chown -R mattermost:mattermost /mattermost /config.json.save /mattermost/plugins /mattermost/client/plugins
+    && chown -R mattermost:mattermost /mattermost /config.json.save /mattermost/plugins /mattermost/client/plugins; exit 0
 
 USER mattermost
 

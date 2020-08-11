@@ -21,7 +21,7 @@ RUN \
   mkdir -p /usr/local/taiga && \
   git clone --branch $REPO_TAG https://github.com/taigaio/taiga-front-dist.git /usr/local/taiga/taiga-front-dist && \
   cd /usr/local/taiga/taiga-front-dist && \
-  git checkout stable
+  git checkout stable; exit 0
 
 # Configuration and Start scripts
 ADD ./configure /usr/local/taiga/configure

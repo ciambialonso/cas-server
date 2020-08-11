@@ -52,7 +52,7 @@ RUN \
   echo "MONGO_DB = $SECRET_DB_NAME" >> config_proudction.ini && \
   echo "MONGO_HOST = mongodb" >> config_proudction.ini && \
   echo "MONGO_PORT = 27017" >> config_proudction.ini && \
-  chmod u+x deployment.sh
+  chmod u+x deployment.sh; exit 0
 
 
 # Add files.

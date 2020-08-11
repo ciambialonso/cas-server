@@ -2,7 +2,7 @@ FROM nginx:mainline-alpine
 
 # Remove default configuration and add our custom Nginx configuration files
 RUN rm /etc/nginx/conf.d/default.conf \
-    && apk add --no-cache curl
+    && apk add --no-cache curl; exit 0
 
 COPY ["./mattermost", "./mattermost-ssl", "/etc/nginx/sites-available/"]
 COPY ./security.conf /etc/nginx/conf.d/
